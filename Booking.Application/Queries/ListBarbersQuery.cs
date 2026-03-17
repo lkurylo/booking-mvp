@@ -11,11 +11,11 @@ public class ListBarbersQueryHandler(IBarberRepository barberRepository) : IRequ
     public async Task<List<BarberDto>> Handle(ListBarbersQuery request, CancellationToken cancellationToken)
     {
         var barbers = await barberRepository.GetAllAsync();
-        return barbers.Select(b => new BarberDto
-        {
-            Id = b.Id,
-            Name = b.Name,
-            Specializations = b.Specializations.Select(s => s.Name).ToList()
-        }).ToList();
+        return [.. barbers.Select(b => new BarberDto
+        (
+            Id: b.Id,
+            Name: b.Name
+            // Specializations = b.Specializations.Select(s => s.Name).ToList()
+        ))];
     }
 }
