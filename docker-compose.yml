@@ -1,0 +1,25 @@
+services:
+  client:
+    build: ./Booking.Client
+    ports:
+      - "4200:80"
+    restart: always
+  api:
+    platform: linux/amd64
+    build:
+      dockerfile: ./Booking.Api/Dockerfile
+      context: .
+    ports:
+      - "4300:8080"
+    restart: always
+    # depends_on:
+    #   - db
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Haslo@123456
+    volumes:
+      - sql_data:/var/opt/mssql
+volumes:
+  sql_data:
