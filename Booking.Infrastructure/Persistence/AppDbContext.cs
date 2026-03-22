@@ -19,7 +19,7 @@ public class AppDbContext : DbContext
 
         // modelBuilder.Entity<BarberEntity>().HasData(
         // new BarberEntity { Id = Guid.NewGuid(), Name = "",  }
-    );
+    // );
 
         modelBuilder.Entity<AppointmentEntity>(entity =>
         {
