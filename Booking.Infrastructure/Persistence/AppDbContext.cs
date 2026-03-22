@@ -10,16 +10,60 @@ public class AppDbContext : DbContext
 
     public DbSet<AppointmentEntity> Appointments { get; set; }
     public DbSet<BarberEntity> Barbers { get; set; }
-    // public DbSet<CustomerEntity> Customers { get; set; }
-    // public DbSet<Service> Services { get; set; }
+    public DbSet<CustomerEntity> Customers { get; set; }
+    public DbSet<ServiceEntity> Services { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // modelBuilder.Entity<BarberEntity>().HasData(
-        // new BarberEntity { Id = Guid.NewGuid(), Name = "",  }
+        Guid barberId = Guid.NewGuid();
+        Guid serviceId = Guid.NewGuid();
+        Guid customerId = Guid.NewGuid();
+
+        // modelBuilder.Entity<CustomerEntity>().HasData(
+        //     new CustomerEntity
+        //     {
+        //         Id = customerId,
+        //         Name = "John Doe",
+        //         Email = "none@example.com"
+        //     }
+        // );
+
+    //     modelBuilder.Entity<BarberEntity>().HasData(
+    //     new BarberEntity
+    //     {
+    //         Id = barberId,
+    //         Name = "Łukasz",
+    //         Specializations = new List<ServiceEntity>()
+    //     {
+    //             new ServiceEntity {
+    //                 Id = serviceId, Name = "Beard Trim", DurationMinutes = 20, PriceAmount = 110 }
+    //     }
+    //     }
     // );
+        // modelBuilder.Entity<AppointmentEntity>().HasData(
+        //     new AppointmentEntity()
+        //     {
+        //         Id = Guid.NewGuid(),
+        //         BarberId = barberId,
+        //         CustomerId = customerId,
+        //         ServiceId = serviceId,
+        //         ScheduledTimeStart = DateTime.Now.AddHours(1),
+        //         ScheduledTimeEnd = DateTime.Now.AddHours(1).AddMinutes(20),
+        //         Status = Domain.Enums.AppointmentStatus.Booked,
+        //         Comments = "First appointment"
+        //     });
+
+        // modelBuilder.Entity<ServiceEntity>().HasData(
+        //     new ServiceEntity
+        //     {
+        //         Id = serviceId,
+        //         Name = "Beard Trim",
+        //         DurationMinutes = 20,
+        //         PriceAmount = 110
+        //     }
+        // );
 
         modelBuilder.Entity<AppointmentEntity>(entity =>
         {
@@ -46,6 +90,9 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(b => b.Id);
             entity.Property(b => b.Name).IsRequired().HasMaxLength(100);
+            entity.HasMany(b => b.Specializations)
+                .WithMany(s => s.Barbers)
+                .UsingEntity(j => j.ToTable("BarberServices"));
         });
 
         // modelBuilder.Entity<CustomerEntity>(entity =>
@@ -55,15 +102,22 @@ public class AppDbContext : DbContext
         //     entity.Property(c => c.Email).IsRequired().HasMaxLength(100);
         // });
 
-        // modelBuilder.Entity<ServiceEntity>(entity =>
-        // {
-        //     entity.HasKey(s => s.Id);
-        //     entity.Property(s => s.Name).IsRequired().HasMaxLength(100);
-        //     entity.OwnsOne(s => s.Price, money =>
-        //     {
-        //         money.Property(m => m.Amount).HasColumnName("PriceAmount").IsRequired();
-        //         money.Property(m => m.Currency).HasColumnName("PriceCurrency").IsRequired().HasMaxLength(3);
-        //     });
-        // });
+        modelBuilder.Entity<ServiceEntity>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+            entity.Property(s => s.Name).IsRequired().HasMaxLength(100);
+            entity.Property(s => s.DurationMinutes).IsRequired();
+            entity.Property(s => s.PriceAmount).IsRequired();
+            // entity.Property
+            // entity.OwnsOne(s => s.Price, money =>
+            // {
+            //     money.Property(m => m.Amount).HasColumnName("PriceAmount").IsRequired();
+            //     money.Property(m => m.Currency).HasColumnName("PriceCurrency").IsRequired().HasMaxLength(3);
+            // });
+        });
+
+        modelBuilder.Entity<ServiceEntity>().HasMany(x=> x.Barbers)
+            .WithMany(x=> x.Specializations)
+            .UsingEntity(j => j.ToTable("BarberServices"));
     }
 }

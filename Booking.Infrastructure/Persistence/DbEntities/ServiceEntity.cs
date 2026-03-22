@@ -7,4 +7,5 @@ public class ServiceEntity
     public string? Comments { get; set; }
     public int DurationMinutes { get; set; }
     public decimal PriceAmount { get; set; }
+    public ICollection<BarberEntity> Barbers { get; set; }
 }
