@@ -16,5 +16,5 @@ public class Barber
     }
 
     public List<Service> Specializations { get; private set; }
-    public List<TimeSlot> WorkingHours { get; private set; }
+    // public List<TimeSlot> WorkingHours { get; private set; }
 }
