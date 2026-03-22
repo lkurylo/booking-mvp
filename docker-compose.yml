@@ -15,11 +15,25 @@ services:
     # depends_on:
     #   - db
   db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    #mcr.microsoft.com/mssql/server:2022-latest
+    # for macos
+    #platform: linux/amd64
+    container_name: db
+    user: root
+    ports:
+      - "1433:1433"
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=Haslo@123456
+      - SSQL_MEMORY_LIMIT_MB=2048
+      - MSSQL_PID=Developer
     volumes:
       - sql_data:/var/opt/mssql
+   # restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 4G
 volumes:
   sql_data:
