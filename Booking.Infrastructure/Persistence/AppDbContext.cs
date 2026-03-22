@@ -17,14 +17,29 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        // modelBuilder.Entity<BarberEntity>().HasData(
+        // new BarberEntity { Id = Guid.NewGuid(), Name = "",  }
+    );
+
         modelBuilder.Entity<AppointmentEntity>(entity =>
         {
             entity.HasKey(a => a.Id);
             entity.Property(a => a.BarberId).IsRequired();
             entity.Property(a => a.CustomerId).IsRequired();
             entity.Property(a => a.ServiceId).IsRequired();
-            entity.Property(a => a.ScheduledTime).IsRequired();
+            entity.Property(a => a.ScheduledTimeStart).IsRequired();
+            entity.Property(a => a.ScheduledTimeEnd).IsRequired();
             entity.Property(a => a.Status).IsRequired();
+            entity.Property(a => a.Comments).HasMaxLength(500);
+            entity.HasOne(a => a.Barber)
+                .WithMany()
+                .HasForeignKey(a => a.BarberId);
+            entity.HasOne(a => a.Customer)
+                .WithMany()
+                .HasForeignKey(a => a.CustomerId);
+            entity.HasOne(a => a.Service)
+                .WithMany()
+                .HasForeignKey(a => a.ServiceId);
         });
 
         modelBuilder.Entity<BarberEntity>(entity =>

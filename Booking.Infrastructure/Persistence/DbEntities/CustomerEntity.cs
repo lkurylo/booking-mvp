@@ -1,12 +1,10 @@
 namespace Booking.Infrastruture.Persistence;
 
-public class BarberEntity
+public class CustomerEntity
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-
-    public List<ServiceEntity> Specializations { get; set; }
-    // public List<TimeSlotEntity> WorkingHours { get; set; }
+    public string Email { get; set; }
     // public DateTime ScheduledTime { get; set; }
     // public int Status { get; set; }
 }
