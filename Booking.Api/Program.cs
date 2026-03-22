@@ -1,5 +1,7 @@
 using Booking.Application;
 using Booking.Infrastruture;
+using Booking.Infrastruture.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +22,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// var summaries = new[]
-// {
-//     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-// };
+if (app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        // remove existing database (for development purposes)
+        context.Database.EnsureDeleted();
+
+        // apply migrations and create database if it doesn't exist
+        context.Database.Migrate();
+    }
+}
+
 
 // app.MapGet("/weatherforecast", () =>
 // {
