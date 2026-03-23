@@ -9,10 +9,11 @@ public class Barber
 
     private Barber() { }
 
-    public Barber(Guid id, string name)
+    public Barber(Guid id, string name, ICollection<Service>? specializations = null)
     {
         Id = id;
         Name = name;
+        Specializations = specializations?.ToList() ?? new List<Service>();
     }
 
     public List<Service> Specializations { get; private set; }
