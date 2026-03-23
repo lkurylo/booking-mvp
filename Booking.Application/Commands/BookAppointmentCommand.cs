@@ -6,15 +6,19 @@ using MediatR;
 
 namespace Booking.Application.Commands;
 
-public record BookAppointmentCommand(Guid BarberId,
-Guid ServiceId, DateTime StartTime) : IRequest<Guid>;
+public record BookAppointmentCommand(
+    Guid BarberId,
+    Guid ServiceId,
+    DateTime StartTime) : IRequest<Guid>;
 
-public class BookAppointmentHandler: IRequestHandler<BookAppointmentCommand, Guid>
+public class BookAppointmentHandler : IRequestHandler<BookAppointmentCommand, Guid>
 {
     private readonly IAppointmentRepository _appointmentRepository;
     private readonly IBarberRepository _barberRepository;
 
-    public BookAppointmentHandler(IAppointmentRepository appointmentRepository, IBarberRepository barberRepository)
+    public BookAppointmentHandler(
+        IAppointmentRepository appointmentRepository,
+        IBarberRepository barberRepository)
     {
         _appointmentRepository = appointmentRepository;
         _barberRepository = barberRepository;
@@ -31,12 +35,13 @@ public class BookAppointmentHandler: IRequestHandler<BookAppointmentCommand, Gui
 
         var service = barber.Specializations.FirstOrDefault(s => s.Id == request.ServiceId);
 
-        if(service is null)
+        if (service is null)
         {
             throw new DomainException("Barber does not offer the selected service.");
         }
 
-        var appointment = new Appointment(request.BarberId, request.ServiceId, new TimeSlot(request.StartTime, request.StartTime.AddMinutes(service.Duration)));
+        var appointment = new Appointment(request.BarberId, request.ServiceId,
+            new TimeSlot(request.StartTime, request.StartTime.AddMinutes(service.Duration)));
 
         await _appointmentRepository.AddAsync(appointment);
 
