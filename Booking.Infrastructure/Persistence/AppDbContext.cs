@@ -17,53 +17,56 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        Guid barberId = Guid.NewGuid();
-        Guid serviceId = Guid.NewGuid();
-        Guid customerId = Guid.NewGuid();
+        Guid barberId = Guid.Parse("a47ac10b-58cc-4372-a567-0e02b2c3d479");
+        Guid serviceId = Guid.Parse("b47ac10b-58cc-4372-a567-0e02b2c3d479");
+        Guid customerId = Guid.Parse("c47ac10b-58cc-4372-a567-0e02b2c3d479");
+        Guid appointmentId = Guid.Parse("d47ac10b-58cc-4372-a567-0e02b2c3d479");
+        DateTime now = DateTime.Parse("2026-03-23T10:00:00");
 
-        // modelBuilder.Entity<CustomerEntity>().HasData(
-        //     new CustomerEntity
-        //     {
-        //         Id = customerId,
-        //         Name = "John Doe",
-        //         Email = "none@example.com"
-        //     }
-        // );
+        var scheduledTimeStart = now.AddHours(1);
+        var scheduledTimeEnd = now.AddHours(1).AddMinutes(20);
 
-    //     modelBuilder.Entity<BarberEntity>().HasData(
-    //     new BarberEntity
-    //     {
-    //         Id = barberId,
-    //         Name = "Łukasz",
-    //         Specializations = new List<ServiceEntity>()
-    //     {
-    //             new ServiceEntity {
-    //                 Id = serviceId, Name = "Beard Trim", DurationMinutes = 20, PriceAmount = 110 }
-    //     }
-    //     }
-    // );
-        // modelBuilder.Entity<AppointmentEntity>().HasData(
-        //     new AppointmentEntity()
-        //     {
-        //         Id = Guid.NewGuid(),
-        //         BarberId = barberId,
-        //         CustomerId = customerId,
-        //         ServiceId = serviceId,
-        //         ScheduledTimeStart = DateTime.Now.AddHours(1),
-        //         ScheduledTimeEnd = DateTime.Now.AddHours(1).AddMinutes(20),
-        //         Status = Domain.Enums.AppointmentStatus.Booked,
-        //         Comments = "First appointment"
-        //     });
+        modelBuilder.Entity<CustomerEntity>().HasData(
+            new CustomerEntity
+            {
+                Id = customerId,
+                Name = "John Doe",
+                Email = "none@example.com"
+            }
+        );
 
-        // modelBuilder.Entity<ServiceEntity>().HasData(
-        //     new ServiceEntity
-        //     {
-        //         Id = serviceId,
-        //         Name = "Beard Trim",
-        //         DurationMinutes = 20,
-        //         PriceAmount = 110
-        //     }
-        // );
+        var service = new ServiceEntity
+        {
+            Id = serviceId,
+            Name = "Beard Trim",
+            DurationMinutes = 20,
+            PriceAmount = 110
+        };
+
+        modelBuilder.Entity<ServiceEntity>().HasData(
+          service
+        );
+
+        modelBuilder.Entity<BarberEntity>().HasData(
+        new BarberEntity
+        {
+            Id = barberId,
+            Name = "Łukasz",
+            // Specializations = [service]
+        }
+    );
+        modelBuilder.Entity<AppointmentEntity>().HasData(
+            new AppointmentEntity()
+            {
+                Id = appointmentId,
+                BarberId = barberId,
+                CustomerId = customerId,
+                ServiceId = serviceId,
+                ScheduledTimeStart = scheduledTimeStart,
+                ScheduledTimeEnd = scheduledTimeEnd,
+                Status = Domain.Enums.AppointmentStatus.Booked,
+                Comments = "First appointment"
+            });
 
         modelBuilder.Entity<AppointmentEntity>(entity =>
         {
@@ -116,8 +119,8 @@ public class AppDbContext : DbContext
             // });
         });
 
-        modelBuilder.Entity<ServiceEntity>().HasMany(x=> x.Barbers)
-            .WithMany(x=> x.Specializations)
+        modelBuilder.Entity<ServiceEntity>().HasMany(x => x.Barbers)
+            .WithMany(x => x.Specializations)
             .UsingEntity(j => j.ToTable("BarberServices"));
     }
 }
