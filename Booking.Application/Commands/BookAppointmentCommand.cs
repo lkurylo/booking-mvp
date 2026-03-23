@@ -43,8 +43,8 @@ public class BookAppointmentHandler : IRequestHandler<BookAppointmentCommand, Gu
         var appointment = new Appointment(request.BarberId, request.ServiceId,
             new TimeSlot(request.StartTime, request.StartTime.AddMinutes(service.Duration)));
 
-        await _appointmentRepository.AddAsync(appointment);
+        var appointmentId = await _appointmentRepository.AddAsync(appointment);
 
-        return appointment.Id;
+        return appointmentId;
     }
 }

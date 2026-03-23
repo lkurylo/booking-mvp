@@ -5,6 +5,6 @@ namespace Booking.Domain.Interfaces.Repositories;
 public interface IAppointmentRepository
 {
     Task<Appointment> GetByIdAsync(Guid id);
-    Task AddAsync(Appointment appointment);
+    Task<Guid> AddAsync(Appointment appointment);
     Task UpdateAsync(Appointment appointment);
 }

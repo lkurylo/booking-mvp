@@ -6,9 +6,9 @@ namespace Booking.Infrastruture.Repositories;
 
 public class AppointmentRepository(AppDbContext context) : IAppointmentRepository
 {
-    public async Task AddAsync(Appointment appointment)
+    public async Task<Guid> AddAsync(Appointment appointment)
     {
-        context.Appointments.Add(new AppointmentEntity
+        var entity = new AppointmentEntity
         {
             Id = appointment.Id,
             BarberId = appointment.BarberId,
@@ -16,9 +16,13 @@ public class AppointmentRepository(AppDbContext context) : IAppointmentRepositor
             ScheduledTimeStart = appointment.ScheduledTime.Start,
             ScheduledTimeEnd = appointment.ScheduledTime.Stop,
             Status = appointment.Status
-        });
+        };
+
+        context.Appointments.Add(entity);
 
         await context.SaveChangesAsync();
+
+        return entity.Id;
     }
 
     public Task<Appointment> GetByIdAsync(Guid id)
